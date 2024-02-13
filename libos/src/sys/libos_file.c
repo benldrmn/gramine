@@ -55,6 +55,7 @@ long libos_syscall_unlinkat(int dfd, const char* pathname, int flag) {
         goto out;
 
     if (!dent->parent) {
+        log_debug("XXXXXXXXXXX -EACCESS unlinkat XXXXXXXXXXXXXXXX");
         ret = -EACCES;
         goto out;
     }
@@ -83,6 +84,7 @@ long libos_syscall_unlinkat(int dfd, const char* pathname, int flag) {
     dent->inode = NULL;
     ret = 0;
 out:
+    log_debug("YYYYYYYYYYY unlinkat YYYYYYYYYYYY ret: %d", ret);
     unlock(&g_dcache_lock);
     if (dir)
         put_dentry(dir);
