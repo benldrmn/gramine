@@ -283,6 +283,8 @@ static int chroot_encrypted_unlink(struct libos_dentry* dent) {
     assert(locked(&g_dcache_lock));
     assert(dent->inode);
 
+    log_error("chroot_encrypted_unlink");
+
     char* uri;
     int ret = chroot_dentry_uri(dent, dent->inode->type, &uri);
     if (ret < 0)
@@ -292,6 +294,7 @@ static int chroot_encrypted_unlink(struct libos_dentry* dent) {
     ret = PalStreamOpen(uri, PAL_ACCESS_RDONLY, /*share_flags=*/0, PAL_CREATE_NEVER,
                         PAL_OPTION_PASSTHROUGH, &palhdl);
     if (ret < 0) {
+        log_error("chroot_encrypted_unlink open ret: %d", ret);
         ret = pal_to_unix_errno(ret);
         goto out;
     }
@@ -299,11 +302,13 @@ static int chroot_encrypted_unlink(struct libos_dentry* dent) {
     ret = PalStreamDelete(palhdl, PAL_DELETE_ALL);
     PalObjectDestroy(palhdl);
     if (ret < 0) {
+        log_error("chroot_encrypted_unlink delete ret: %d", ret);
         ret = pal_to_unix_errno(ret);
         goto out;
     }
     ret = 0;
 out:
+    log_error("chroot_encrypted_unlink ret: %d", ret);
     free(uri);
     return ret;
 }
