@@ -128,18 +128,32 @@ static uint64_t get_tsc_hz_hypervisor(void) {
 
 /* initialize the data structures used for date/time emulation using TSC */
 void init_tsc(void) {
+    log_error("jshamir entering g_tsc_hz");
+
     if (!is_tsc_usable())
+    {
+        log_error("jshamir ERROR tsc is not usable! early return");
         return;
+    }
 
     g_tsc_hz = get_tsc_hz_baremetal();
     if (g_tsc_hz)
+    {
+        log_error("jshamir get_tsc_hz_baremetal: %" PRIu64, g_tsc_hz);
         return;
+    }
+
 
     /* hypervisors may not expose crystal-clock frequency CPUID leaves, so instead try
      * hypervisor-special synthetic CPUID leaf 0x40000010 (VMWare-style Timing Information) */
     g_tsc_hz = get_tsc_hz_hypervisor();
     if (g_tsc_hz)
+    {
+        log_error("jshamir get_tsc_hz_baremetal: %" PRIu64, g_tsc_hz);
         return;
+    }
+
+    log_error("jshamir ERROR UNABLE TO SET g_tsc_hz");
 }
 
 int _PalSystemTimeQuery(uint64_t* out_usec) {
