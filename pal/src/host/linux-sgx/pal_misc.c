@@ -7,6 +7,7 @@
 
 #include <asm/fcntl.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #include "api.h"
 #include "cpu.h"
